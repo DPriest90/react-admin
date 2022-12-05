@@ -1,8 +1,10 @@
+// Import all the stuff we will need from the react framework and Material UI
 import { createContext, useState, useMemo } from "react";
 import { createTheme } from "@mui/material/styles";
 
 // Colour design tokens (reminder for self, using ternary operator. which is ?: in C#)
 export const tokens = (mode) => ({
+    // Set all the colours we want to use for light or dark mode (EXPAND to see code)
     ...(mode==='dark' ?
     // Dark colour theme
     {
@@ -128,6 +130,7 @@ export const themeSettings = (mode) => {
     const colours = tokens(mode);
 
     return {
+        // Material UI themes colour palette settings
         palette: {
             mode: mode,
             ...(mode === 'dark' // start of ternary operator
@@ -146,13 +149,75 @@ export const themeSettings = (mode) => {
                 background: {
                     default: colours.primary[500],
                 }
-                
             }
             :
             // LIGHT MUI THEME
             {
-
+                primary:  {
+                    main: colours.primary[100],
+                },
+                secondary: {
+                    main: colours.greenAccent[500],
+                },
+                neutral: {
+                    dark: colours.grey[700],
+                    main: colours.grey[500],
+                    light: colours.grey[100]
+                },
+                background: {
+                    default: '#fcfcfc',
+                }
             })// End of ternary operator block
+        },
+        // Material UI themes typography settings
+        typography: {
+            fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+            fontSize: 12,
+            h1: {
+                fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+                fontSize: 40,
+            },
+            h2: {
+                fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+                fontSize: 32,
+            },
+            h3: {
+                fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+                fontSize: 24,
+            },
+            h4: {
+                fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+                fontSize: 20,
+            },
+            h5: {
+                fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+                fontSize: 16,
+            },
+            h6: {
+                fontFamily: ["Source Sans Pro", "sans-serif"].join(","),
+                fontSize: 14,
+            },
         }
-    }
+    };
+};
+
+// Context for Material UI colour mode
+export const ColourModeContext = createContext({
+    toggleColourMode: () => {}
+});
+
+export const useMode = () => {
+    const [mode, setMode] = useState("dark");
+    const colourMode = useMemo(
+        () => ({
+            // This is function that actually does the light/dark toggling
+            toggleColourMode: () => 
+            setMode((prev) => (prev === "light" ? "dark" : "light")),
+        }),
+        []
+    );
+
+    const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
+
+    return [theme, colourMode];
 }
